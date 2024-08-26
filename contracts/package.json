@@ -1,0 +1,23 @@
+{
+  "name": "gou-rou-contracts",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": " hardhat test",
+    "compile": "hardhat compile"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "AGPL-3.0-only",
+  "description": "",
+  "devDependencies": {
+    "@nomicfoundation/hardhat-ignition-ethers": "^0.15.5",
+    "@nomicfoundation/hardhat-toolbox": "^5.0.0",
+    "dotenv": "^16.4.5",
+    "hardhat": "^2.22.9"
+  },
+  "dependencies": {
+    "@openzeppelin/contracts": "^5.0.2",
+    "hex-to-array-buffer": "^2.0.0"
+  }
+}
