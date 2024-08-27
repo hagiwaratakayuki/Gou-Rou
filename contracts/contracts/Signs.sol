@@ -14,7 +14,8 @@ contract Signs {
         address callAccount;
     }
     struct Sign {
-        bytes signature; // ECDSA sign for target account
+        bytes acceptSignature; // ECDSA sign for target account
+        bytes requstSignature;
         address signer;
         address truster;
         address payChecker;
@@ -46,7 +47,8 @@ contract Signs {
 
     function addTrust(
         //bytes32 message,
-        bytes memory signature,
+        bytes memory requestSignature,
+        bytes memory acceptSignature,
         address target,
         address truster,
         uint fee
@@ -55,16 +57,21 @@ contract Signs {
             signerMapping[truster].signAccount == tx.origin,
             "truster or signer is invalid"
         );
-        bytes memory bytesTarget = abi.encodePacked(target);
 
         require(
-            MessageHashUtils.toEthSignedMessageHash(bytesTarget).recover(
-                signature
-            ) == tx.origin,
-            "invalid signature"
+            MessageHashUtils
+                .toEthSignedMessageHash(abi.encodePacked(tx.origin))
+                .recover(requestSignature) == target,
+            "invalid accept signature"
+        );
+        require(
+            MessageHashUtils
+                .toEthSignedMessageHash(abi.encodePacked(target))
+                .recover(acceptSignature) == tx.origin,
+            "invalid accept signature"
         );
 
-        signMapping[target].signature = signature;
+        signMapping[target].acceptSignature = signature;
         signMapping[target].signer = tx.origin;
         signMapping[target].truster = truster;
         signMapping[target].fee = fee;
