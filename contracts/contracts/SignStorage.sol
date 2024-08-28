@@ -5,7 +5,7 @@ import "@openzeppelin/contracts/utils/cryptography/ECDSA.sol";
 import "@openzeppelin/contracts/utils/cryptography/MessageHashUtils.sol";
 import "hardhat/console.sol";
 
-contract Signs {
+contract Storage {
     using ECDSA for bytes32;
 
     struct Signer {
@@ -28,12 +28,28 @@ contract Signs {
     mapping(address => Signer) signerMapping;
     mapping(address => Sign) signMapping;
 
+    mapping(address => bool) _signerUodateAuthorityContracts;
+    mapping(address => bool) _trustAuthorityAccont;
+
+    address _owner;
+
+    constructor(address owner) {
+        _owner = owner;
+    }
+
+    function getOwener() public view returns (address) {
+        return _owner;
+    }
+
     function insertOrUpdateSigner(
         address signAccount,
         string memory callMethod,
         address callAccount
     ) public {
-        require(msg.sender == tx.origin, "need update call directry");
+        require(
+            _signerUodateAuthorityContracts[msg.sender],
+            "aithoraization failed"
+        );
         signerMapping[tx.origin].signAccount = signAccount;
         signerMapping[tx.origin].callAccount = callAccount;
         signerMapping[tx.origin].callMethod = callMethod;
@@ -71,7 +87,7 @@ contract Signs {
             "invalid accept signature"
         );
 
-        signMapping[target].acceptSignature = signature;
+        signMapping[target].acceptSignature = acceptSignature;
         signMapping[target].signer = tx.origin;
         signMapping[target].truster = truster;
         signMapping[target].fee = fee;
