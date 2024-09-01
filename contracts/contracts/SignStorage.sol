@@ -28,17 +28,21 @@ contract Storage {
     mapping(address => Signer) signerMapping;
     mapping(address => Sign) signMapping;
 
-    mapping(address => bool) _signerUodateAuthorityContracts;
+    mapping(address => bool) _signerUpdateAuthorityContracts;
     mapping(address => bool) _trustAuthorityAccont;
+    mapping(address => bool) _decrareOwnershipAuthorityAccount;
 
-    address _owner;
+    mapping(address => bool) _defaultSignerUpdateAuthorityContracts;
+    mapping(address => bool) _defaultrustAuthorityAccont;
 
-    constructor(address owner) {
-        _owner = owner;
+    address _defaultOperater;
+
+    constructor(address defaultOperater) {
+        _defaultOperater = defaultOperater;
     }
 
-    function getOwener() public view returns (address) {
-        return _owner;
+    function getDefaultOperater() public view returns (address) {
+        return _defaultOperater;
     }
 
     function insertOrUpdateSigner(
@@ -47,8 +51,8 @@ contract Storage {
         address callAccount
     ) public {
         require(
-            _signerUodateAuthorityContracts[msg.sender],
-            "aithoraization failed"
+            _signerUpdateAuthorityContracts[msg.sender],
+            "authoraization failed"
         );
         signerMapping[tx.origin].signAccount = signAccount;
         signerMapping[tx.origin].callAccount = callAccount;
@@ -94,6 +98,11 @@ contract Storage {
 
         return true;
     }
+
+    function declareCotractOwnership(
+        address owner,
+        address cotractAddress
+    ) public {}
 
     function checkTrust(
         address owner,
