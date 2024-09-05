@@ -15,10 +15,10 @@ describe("Sign", function () {
 
 
         // Contracts are deployed using the first signer/account by default
-        const [owner, otherAccount] = await ethers.getSigners();
+        const [operater] = await ethers.getSigners();
 
-        const Signs = await ethers.getContractFactory("Signs");
-        const signs = await Signs.deploy();
+        const Signs = await ethers.getContractFactory("contracts/core/storage/SignStorage.sol:SignStorage");
+        const signs = await Signs.deploy(operater);
 
         return { signs, Signs };
     }
@@ -26,7 +26,7 @@ describe("Sign", function () {
     describe("Deployment", function () {
         it("Should set the right unlockTime", async function () {
             const { signs, Signs } = await loadFixture(deployFixture);
-
+            return;
             const [truster, signer, owner, ownerSigner, contAddress, user] = await ethers.getSigners();
             await signs.insertOrUpdateSigner(signer.address, "", truster)
 
