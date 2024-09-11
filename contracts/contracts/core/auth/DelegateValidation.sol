@@ -35,7 +35,7 @@ contract DelegateValidation {
         string memory key,
         address validater,
         bool permission
-    ) external _checkOperationPermission {
+    ) public {
         _defaultPermission[key][validater] = permission;
     }
 
@@ -82,12 +82,39 @@ contract DelegateValidation {
         _;
     }
 
+    function _checkPermssionFromMultiAccount(
+        address[] memory accounts,
+        string memory key
+    ) public view {
+        bool isValid;
+        for (uint i = 0; i < accounts.length; ) {
+            address account;
+            account = accounts[i];
+            bool allow;
+            bool denay;
+            (allow, denay) = _checkAccountPermission(account, key);
+            require(denay == false, "validater denyed");
+            if (allow == true) {
+                isValid = true;
+            }
+
+            unchecked {
+                i++;
+            }
+        }
+        if (isValid == false) {
+            isValid = _checkDefaultPermssion(key);
+        }
+
+        require(isValid, "validater dose not authoraised");
+    }
+
     function _updateAccountPermission(
         string memory key,
         address account,
         address validater,
         uint8 permission
-    ) external _checkAccountOperationPermission(account) {
+    ) public {
         require(
             permission == 1 || permission == 2,
             "invalid permsion valiue. 1 is allow 2 is denay"
